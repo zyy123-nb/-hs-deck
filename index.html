@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="炉石传说卡组推荐 — 传说分段胜率排行 · S/A/B 级卡组 · 核心单卡解析 · 对局优劣分析">
+  <title>炉石卡组推荐 — HS Deck</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: #1a1a2e; color: #eee; min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ====== 导航栏 ====== */
+    .navbar {
+      background: #16213e; padding: 0 24px; display: flex; align-items: center;
+      justify-content: space-between; height: 60px; border-bottom: 1px solid #0f3460;
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-logo { font-size: 22px; font-weight: bold; color: #ffb347; display: flex; align-items: center; gap: 8px; }
+    .nav-links { display: flex; gap: 24px; list-style: none; }
+    .nav-links a { color: #ccc; font-size: 14px; padding: 8px 0; border-bottom: 2px solid transparent; transition: color 0.3s, border-color 0.3s; }
+    .nav-links a:hover, .nav-links a.active { color: #ffb347; border-bottom-color: #ffb347; }
+
+    /* ====== 统计栏 ====== */
+    .stats-bar {
+      background: linear-gradient(135deg, #16213e 0%, #1a1a3e 100%);
+      padding: 20px 24px; border-bottom: 1px solid #0f3460;
+      display: flex; gap: 32px; flex-wrap: wrap; align-items: center;
+    }
+    .stat-item { text-align: center; }
+    .stat-num { font-size: 28px; font-weight: bold; color: #ffb347; }
+    .stat-label { font-size: 12px; color: #888; margin-top: 2px; }
+    .stat-divider { width: 1px; height: 40px; background: #0f3460; }
+
+    /* 排序 */
+    .sort-group { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .sort-label { font-size: 13px; color: #888; }
+    .sort-select {
+      background: #11111b; border: 1px solid #333; color: #eee;
+      padding: 8px 14px; border-radius: 8px; font-size: 13px;
+      outline: none; cursor: pointer;
+    }
+    .sort-select:focus { border-color: #ffb347; }
+
+    /* ====== 筛选栏 ====== */
+    .filter-bar {
+      background: #16213e; padding: 14px 24px;
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+      border-bottom: 1px solid #0f3460;
+    }
+    .filter-label { font-size: 13px; color: #888; }
+    .filter-btn {
+      padding: 6px 14px; border-radius: 20px; border: 1px solid #333;
+      background: transparent; color: #aaa; font-size: 13px; cursor: pointer;
+      transition: all 0.25s; white-space: nowrap;
+    }
+    .filter-btn:hover { border-color: #ffb347; color: #ffb347; }
+    .filter-btn.active { background: #ffb347; color: #1a1a2e; border-color: #ffb347; font-weight: bold; }
+    .search-input {
+      background: #11111b; border: 1px solid #333; color: #eee;
+      padding: 8px 14px; border-radius: 20px; font-size: 13px; width: 180px;
+      outline: none; transition: border-color 0.25s; margin-left: auto;
+    }
+    .search-input:focus { border-color: #ffb347; }
+    .search-input::placeholder { color: #666; }
+    .result-count { font-size: 13px; color: #888; margin-left: 6px; white-space: nowrap; }
+
+    /* ====== 主内容 ====== */
+    .main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+    .page-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .page-title { font-size: 28px; }
+    .page-subtitle { font-size: 14px; color: #888; }
+
+    /* ====== 卡组网格 ====== */
+    .deck-grid { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .deck-card {
+      background: #16213e; border-radius: 12px; padding: 20px; width: 280px;
+      border: 1px solid #0f3460; cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .deck-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(255,179,71,0.12); border-color: #ffb347; }
+    .deck-header { display: flex; align-items: center; justify-content: space-between; }
+    .deck-class { font-size: 13px; color: #aaa; display: flex; align-items: center; gap: 6px; }
+    .class-icon { font-size: 22px; }
+    .tier-badge { padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+    .tier-S { background: #ffb347; color: #1a1a2e; }
+    .tier-A { background: #4caf50; color: white; }
+    .tier-B { background: #2196f3; color: white; }
+    .deck-name { font-size: 18px; font-weight: bold; color: #fff; }
+    .deck-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag { padding: 2px 10px; border-radius: 12px; font-size: 11px; background: #0f3460; color: #aaa; }
+    .deck-stats { display: flex; gap: 16px; font-size: 13px; color: #888; }
+    .stat-value { color: #ffb347; font-weight: bold; }
+    .stat-win-high { color: #4caf50; }
+    .stat-win-mid  { color: #ffb347; }
+    .stat-win-low  { color: #f44336; }
+    .deck-desc { font-size: 13px; color: #777; line-height: 1.5; }
+    .deck-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+    .view-detail { font-size: 12px; color: #ffb347; opacity: 0; transition: opacity 0.3s; }
+    .deck-card:hover .view-detail { opacity: 1; }
+
+    /* ====== 空结果 ====== */
+    .no-result { text-align: center; padding: 80px 20px; color: #666; width: 100%; }
+    .no-result .big { font-size: 60px; margin-bottom: 16px; }
+
+    /* ====== 详情弹窗 ====== */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s;
+    }
+    .modal-overlay.show { opacity: 1; pointer-events: auto; }
+    .modal {
+      background: #16213e; border-radius: 16px; max-width: 600px; width: 90%;
+      max-height: 85vh; overflow-y: auto; padding: 32px;
+      border: 1px solid #0f3460; transform: translateY(20px); transition: transform 0.3s;
+      position: relative;
+    }
+    .modal-overlay.show .modal { transform: translateY(0); }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; color: #888; font-size: 24px;
+      cursor: pointer; transition: color 0.2s; line-height: 1;
+    }
+    .modal-close:hover { color: #ffb347; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .modal-class { font-size: 16px; color: #ccc; display: flex; align-items: center; gap: 8px; }
+    .modal-class .big-icon { font-size: 36px; }
+    .modal-name { font-size: 26px; font-weight: bold; margin-bottom: 4px; }
+    .modal-tier { display: inline-block; padding: 4px 14px; border-radius: 4px; font-size: 14px; font-weight: bold; }
+    .modal-stats { display: flex; gap: 24px; margin: 16px 0; padding: 14px; background: #11111b; border-radius: 8px; }
+    .modal-stat { text-align: center; }
+    .modal-stat .num { font-size: 22px; font-weight: bold; color: #ffb347; }
+    .modal-stat .lbl { font-size: 11px; color: #888; }
+    .modal-section { margin-top: 20px; }
+    .modal-section h3 { color: #ffb347; font-size: 15px; margin-bottom: 10px; border-bottom: 1px solid #0f3460; padding-bottom: 6px; }
+    .key-card { display: inline-flex; align-items: center; gap: 6px; background: #11111b; padding: 6px 12px; border-radius: 6px; margin: 4px; font-size: 13px; }
+    .key-card .mana { background: #2196f3; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; }
+    .matchup-row { display: flex; gap: 16px; flex-wrap: wrap; }
+    .matchup-col { flex: 1; min-width: 200px; }
+    .matchup-col h4 { font-size: 13px; margin-bottom: 6px; }
+    .matchup-good { color: #4caf50; font-size: 13px; }
+    .matchup-bad  { color: #f44336; font-size: 13px; }
+    .matchup-item { padding: 3px 0; font-size: 13px; color: #aaa; }
+
+    /* ====== 底部 ====== */
+    .footer { background: #16213e; text-align: center; padding: 24px; color: #666; font-size: 13px; border-top: 1px solid #0f3460; margin-top: 40px; }
+
+    /* ====== 响应式 ====== */
+    @media (max-width: 640px) {
+      .navbar { padding: 0 12px; }
+      .nav-links { gap: 12px; }
+      .nav-links a { font-size: 12px; }
+      .stats-bar { padding: 14px; gap: 16px; }
+      .stat-num { font-size: 22px; }
+      .sort-group { margin-left: 0; }
+      .filter-bar { padding: 10px 12px; gap: 6px; }
+      .filter-btn { font-size: 11px; padding: 5px 10px; }
+      .search-input { width: 100%; margin-left: 0; }
+      .main { padding: 16px; }
+      .deck-card { width: 100%; }
+      .modal { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ====== 导航栏 ====== -->
+  <nav class="navbar">
+    <a href="#" class="nav-logo">🔥 HS Deck</a>
+    <ul class="nav-links">
+      <li><a href="#" class="active">卡组推荐</a></li>
+      <li><a href="#" style="color:#666;cursor:not-allowed;border-bottom:none;" title="开发中">职业排行</a></li>
+      <li><a href="#" style="color:#666;cursor:not-allowed;border-bottom:none;" title="开发中">环境数据</a></li>
+      <li><a href="#" style="color:#666;cursor:not-allowed;border-bottom:none;" title="开发中">卡牌查询</a></li>
+    </ul>
+  </nav>
+
+  <!-- ====== 统计栏 ====== -->
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-item"><div class="stat-num" id="countAll">22</div><div class="stat-label">总卡组</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-num" id="countS" style="color:#ffb347;">4</div><div class="stat-label">S 级</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-num" id="countA" style="color:#4caf50;">10</div><div class="stat-label">A 级</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-num" id="countB" style="color:#2196f3;">8</div><div class="stat-label">B 级</div></div>
+    <div class="sort-group">
+      <span class="sort-label">排序：</span>
+      <select class="sort-select" id="sortSelect">
+        <option value="winRate">胜率从高到低</option>
+        <option value="dust">费用从低到高</option>
+        <option value="name">名称 A-Z</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- ====== 筛选栏 ====== -->
+  <div class="filter-bar" id="filterBar">
+    <span class="filter-label">职业：</span>
+    <button class="filter-btn active" data-type="class" data-value="all">全部</button>
+    <button class="filter-btn" data-type="class" data-value="法师">🟣 法师</button>
+    <button class="filter-btn" data-type="class" data-value="圣骑士">🟡 圣骑士</button>
+    <button class="filter-btn" data-type="class" data-value="战士">🔴 战士</button>
+    <button class="filter-btn" data-type="class" data-value="猎人">🟢 猎人</button>
+    <button class="filter-btn" data-type="class" data-value="德鲁伊">🟤 德鲁伊</button>
+    <button class="filter-btn" data-type="class" data-value="术士">⚫ 术士</button>
+    <button class="filter-btn" data-type="class" data-value="潜行者">🔵 潜行者</button>
+    <button class="filter-btn" data-type="class" data-value="萨满">🦅 萨满</button>
+    <button class="filter-btn" data-type="class" data-value="牧师">💀 牧师</button>
+    <button class="filter-btn" data-type="class" data-value="恶魔猎手">👹 恶魔猎手</button>
+    <button class="filter-btn" data-type="class" data-value="死亡骑士">❄️ 死亡骑士</button>
+    <span class="filter-label" style="margin-left:8px;">评级：</span>
+    <button class="filter-btn active" data-type="tier" data-value="all">全部</button>
+    <button class="filter-btn" data-type="tier" data-value="S">S 级</button>
+    <button class="filter-btn" data-type="tier" data-value="A">A 级</button>
+    <button class="filter-btn" data-type="tier" data-value="B">B 级</button>
+    <input type="text" class="search-input" id="searchInput" placeholder="🔍 搜索卡组名...">
+    <span class="result-count" id="resultCount"></span>
+  </div>
+
+  <!-- ====== 主内容 ====== -->
+  <div class="main">
+    <div class="page-header">
+      <h1 class="page-title">卡组推荐</h1>
+      <p class="page-subtitle">基于传说分段数据 · 实时胜率 · 每版更新</p>
+    </div>
+    <div class="deck-grid" id="deckGrid"></div>
+  </div>
+
+  <!-- ====== 详情弹窗 ====== -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal" id="modalContent" onclick="event.stopPropagation()"></div>
+  </div>
+
+  <!-- ====== 底部 ====== -->
+  <footer class="footer">
+    <p>数据来源：HSReplay · 传说分段 · 最近 7 天</p>
+    <p style="margin-top:4px;">仅供学习参考 © 2026 HS Deck</p>
+  </footer>
+
+  <!-- ============================================
+       JavaScript
+       ============================================ -->
+  <script>
+    // ====== 全部卡组数据 (22套) ======
+    const decks = [
+      { hero:"法师",     icon:"🟣", name:"元素控制法",   tier:"S", tags:["控制","慢速"],    winRate:58.3, dust:12800, desc:"利用元素联动控场，后期靠巨龙之怒+火焰冲击一波带走。对阵快攻有冰甲护脸，对阵控制靠资源碾压。", keyCards:[{name:"巨龙之怒",cost:7},{name:"冰甲",cost:3},{name:"火焰冲击",cost:4},{name:"元素唤醒",cost:2}], goodVs:["快攻瞎","海盗战","动物园"], badVs:["奇迹德","复活牧","控制萨"] },
+      { hero:"法师",     icon:"🟣", name:"奥秘法",       tier:"B", tags:["快攻","奥秘"],    winRate:48.7, dust:5600,  desc:"铺奥秘干扰对手节奏，法力浮龙+学徒快速展开，6费前结束战斗。", keyCards:[{name:"法力浮龙",cost:1},{name:"巫师学徒",cost:2},{name:"爆炸符文",cost:3},{name:"火球术",cost:4}], goodVs:["奇迹德","手牌术"], badVs:["防战","复活牧","控制萨"] },
+      { hero:"圣骑士",   icon:"🟡", name:"报告骑",       tier:"S", tags:["快攻","铺场"],    winRate:56.1, dust:6400,  desc:"廉价快攻之王。战斗号角拉报告兵，洛萨克森Buff全场，5-6费叫杀。", keyCards:[{name:"战斗号角",cost:4},{name:"洛萨克森",cost:5},{name:"迷失在丛林",cost:1},{name:"等级提升",cost:5}], goodVs:["奥秘法","亡语猎","动物园"], badVs:["防战","控制萨","冰DK"] },
+      { hero:"圣骑士",   icon:"🟡", name:"元气骑",       tier:"A", tags:["组合技","OTK"],  winRate:52.5, dust:11000, desc:"过牌凑齐组件，猛虎之神+神圣愤怒25血斩杀。抓控制卡组利器。", keyCards:[{name:"猛虎之神",cost:25},{name:"神圣愤怒",cost:5},{name:"水晶学",cost:2},{name:"时间龙",cost:4}], goodVs:["防战","复活牧","手牌术"], badVs:["快攻瞎","海盗战","奇数贼"] },
+      { hero:"战士",     icon:"🔴", name:"防战",         tier:"A", tags:["控制","疲劳"],    winRate:54.7, dust:15000, desc:"叠甲解场等对面打光资源。遇到快攻笑出声，遇到慢速拼疲劳。", keyCards:[{name:"绝命乱斗",cost:5},{name:"盾牌格挡",cost:3},{name:"苦痛侍僧",cost:3},{name:"亡者之牌",cost:2}], goodVs:["快攻瞎","海盗战","快攻猎"], badVs:["奇迹德","复活牧","手牌术"] },
+      { hero:"战士",     icon:"🔴", name:"海盗战",       tier:"B", tags:["快攻","武器"],    winRate:47.9, dust:7200,  desc:"前期海盗铺场抢血，升级武器直接呼脸。赢的快输的也快。", keyCards:[{name:"恩佐斯的副官",cost:1},{name:"升级",cost:1},{name:"南海船长",cost:3},{name:"英勇打击",cost:2}], goodVs:["奇迹德","奥秘法"], badVs:["防战","控制萨","冰DK"] },
+      { hero:"猎人",     icon:"🟢", name:"亡语猎",       tier:"A", tags:["节奏","亡语"],    winRate:53.4, dust:9600,  desc:"触发亡语滚雪球，狮子+冬灵后期大哥连拍。对手解不干净就输。", keyCards:[{name:"草原狮",cost:6},{name:"冬灵",cost:8},{name:"装死",cost:1},{name:"食腐土狼",cost:2}], goodVs:["手牌术","防战"], badVs:["快攻瞎","奇数贼","报告骑"] },
+      { hero:"猎人",     icon:"🟢", name:"快攻猎",       tier:"B", tags:["快攻","野兽"],    winRate:50.1, dust:4800,  desc:"1费开始铺野兽，驯兽师Buff，杀戮命令收头。新手上分首选。", keyCards:[{name:"结网蛛",cost:1},{name:"驯兽师",cost:4},{name:"杀戮命令",cost:3},{name:"放狗",cost:3}], goodVs:["奇迹德","奥秘法"], badVs:["防战","报告骑","冰DK"] },
+      { hero:"德鲁伊",   icon:"🟤", name:"奇迹德",       tier:"B", tags:["组合技","OTK"],  winRate:50.2, dust:14400, desc:"跳费→过牌→蓝龙+双月火+横扫=30血斩杀。难度高但爽感拉满。", keyCards:[{name:"蓝龙",cost:9},{name:"月火术",cost:0},{name:"横扫",cost:4},{name:"激活",cost:0}], goodVs:["防战","手牌术","复活牧"], badVs:["快攻瞎","海盗战","奇数贼","快攻猎"] },
+      { hero:"德鲁伊",   icon:"🟤", name:"树人德",       tier:"A", tags:["铺场","中速"],    winRate:53.0, dust:8800,  desc:"植树造林+自然之力铺满全场，咆哮一波带走。简单粗暴的中速王者。", keyCards:[{name:"植树造林",cost:3},{name:"自然之力",cost:5},{name:"野蛮咆哮",cost:3},{name:"空中团本",cost:2}], goodVs:["手牌术","动物园"], badVs:["防战","控制萨","冰DK"] },
+      { hero:"术士",     icon:"⚫", name:"手牌术",       tier:"A", tags:["中速","手牌"],    winRate:52.8, dust:11200, desc:"手里牌越多随从越强。山岭巨人4费8/8，暮光幼龙血量爆炸。", keyCards:[{name:"山岭巨人",cost:12},{name:"暮光幼龙",cost:4},{name:"空灵召唤者",cost:4},{name:"远古看守者",cost:2}], goodVs:["防战","复活牧"], badVs:["快攻瞎","海盗战","奇数贼","奥秘法"] },
+      { hero:"术士",     icon:"⚫", name:"动物园",       tier:"B", tags:["快攻","铺场"],    winRate:49.5, dust:4000,  desc:"全游戏最便宜传说卡组。低费随从铺场，末日守卫斩杀。", keyCards:[{name:"烈焰小鬼",cost:1},{name:"虚空行者",cost:1},{name:"末日守卫",cost:5},{name:"阿古斯防御者",cost:4}], goodVs:["奇迹德","奥秘法"], badVs:["防战","冰DK","控制萨"] },
+      { hero:"潜行者",   icon:"🔵", name:"剽窃贼",       tier:"A", tags:["控制","随机"],    winRate:51.6, dust:8800,  desc:"偷对面职业牌打对面。苔丝+学术剽窃=无限资源，每局体验都不一样。", keyCards:[{name:"苔丝",cost:8},{name:"学术剽窃",cost:4},{name:"收集者沙库尔",cost:4},{name:"闪避",cost:2}], goodVs:["防战","复活牧","手牌术"], badVs:["快攻瞎","奇数贼","报告骑"] },
+      { hero:"潜行者",   icon:"🔵", name:"奇数贼",       tier:"S", tags:["快攻","节奏"],    winRate:57.2, dust:9600,  desc:"英雄技能变2/2匕首，节奏碾压。暴徒+菌菇术士滚雪球，天梯霸主。", keyCards:[{name:"暴徒",cost:5},{name:"菌菇术士",cost:5},{name:"冷血",cost:1},{name:"军情七处特工",cost:3}], goodVs:["手牌术","奇迹德","奥秘法"], badVs:["防战","报告骑","快攻瞎"] },
+      { hero:"萨满",     icon:"🦅", name:"图腾萨",       tier:"B", tags:["快攻","铺场"],    winRate:49.3, dust:5200,  desc:"低费随从+图腾Buff，4费分裂战斧复制全场。造价最低的传说卡组。", keyCards:[{name:"分裂战斧",cost:4},{name:"图腾魔像",cost:2},{name:"大漩涡传送门",cost:2},{name:"火舌图腾",cost:2}], goodVs:["动物园","奥秘法"], badVs:["防战","控制萨","冰DK"] },
+      { hero:"萨满",     icon:"🦅", name:"控制萨",       tier:"A", tags:["控制","战吼"],    winRate:53.8, dust:13200, desc:"沙德沃克无限战吼，女巫哈加莎后期无限资源。打谁都能赢。", keyCards:[{name:"沙德沃克",cost:9},{name:"女巫哈加莎",cost:8},{name:"火山喷发",cost:5},{name:"治疗之雨",cost:3}], goodVs:["快攻瞎","海盗战","快攻猎","报告骑"], badVs:["奇迹德","手牌术"] },
+      { hero:"牧师",     icon:"💀", name:"复活牧",       tier:"A", tags:["控制","复活"],    winRate:54.2, dust:16000, desc:"永恒奴役+法术钻石反复拉大哥，对面解完一波还有一波。贵但强。", keyCards:[{name:"永恒奴役",cost:4},{name:"法术钻石",cost:7},{name:"暗言术灭",cost:3},{name:"大蓝龙",cost:9}], goodVs:["防战","手牌术","冰DK"], badVs:["奇数贼","报告骑","快攻瞎"] },
+      { hero:"牧师",     icon:"💀", name:"暗牧",         tier:"B", tags:["快攻","暗影"],    winRate:48.1, dust:6800,  desc:"暗影形态抢节奏，暗言术灭清嘲讽，心灵震爆补伤害。快攻牧师异端玩法。", keyCards:[{name:"暗影形态",cost:2},{name:"心灵震爆",cost:2},{name:"暗言术痛",cost:2},{name:"暗言术灭",cost:3}], goodVs:["动物园","手牌术"], badVs:["防战","快攻瞎","报告骑"] },
+      { hero:"恶魔猎手", icon:"👹", name:"亡语瞎",       tier:"A", tags:["中速","亡语"],    winRate:54.0, dust:10400, desc:"亡语触发配合恶魔变形，日怒+凯恩血蹄中期碾压。节奏拉满。", keyCards:[{name:"凯恩·日怒",cost:4},{name:"恶魔变形",cost:5},{name:"伊利达雷",cost:3},{name:"亡语者",cost:2}], goodVs:["手牌术","奇迹德"], badVs:["防战","控制萨","报告骑"] },
+      { hero:"恶魔猎手", icon:"👹", name:"快攻瞎",       tier:"S", tags:["快攻","铺场"],    winRate:55.8, dust:5600,  desc:"伊利达雷+战斗邪犬急速铺场，凯恩日怒过墙斩杀。环境定义者。", keyCards:[{name:"战斗邪犬",cost:1},{name:"凯恩·日怒",cost:4},{name:"吞噬魔法",cost:1},{name:"伊利达雷审问官",cost:3}], goodVs:["奇迹德","手牌术","奥秘法","动物园"], badVs:["防战","控制萨"] },
+      { hero:"死亡骑士", icon:"❄️", name:"冰DK",         tier:"A", tags:["控制","冰霜"],    winRate:52.3, dust:12800, desc:"冰霜疫病控场，辛达苟萨冻结，亡语者女士后期终结。稳扎稳打。", keyCards:[{name:"辛达苟萨",cost:7},{name:"冰霜疫病",cost:2},{name:"亡语者女士",cost:8},{name:"冰龙吐息",cost:3}], goodVs:["快攻瞎","海盗战","快攻猎","动物园"], badVs:["奇迹德","手牌术","复活牧"] },
+      { hero:"死亡骑士", icon:"❄️", name:"血DK",         tier:"B", tags:["控制","鲜血"],    winRate:47.5, dust:14800, desc:"吸血回血续航拉满，血色十字军+鲜血女王后期碾压。慢但肉到对面绝望。", keyCards:[{name:"鲜血女王",cost:8},{name:"血色十字军",cost:6},{name:"吸血鬼之触",cost:1},{name:"灵魂虹吸",cost:5}], goodVs:["快攻瞎","海盗战","快攻猎"], badVs:["奇迹德","复活牧","手牌术"] },
+    ];
+
+    // ====== 状态 ======
+    let currentClass = "all", currentTier = "all", currentSearch = "", currentSort = "winRate";
+
+    // ====== 胜率颜色 ======
+    function winClass(rate) {
+      if (rate >= 55) return "stat-win-high";
+      if (rate >= 50) return "stat-win-mid";
+      return "stat-win-low";
+    }
+
+    // ====== 排序 ======
+    function sortDecks(arr) {
+      if (currentSort === "winRate") return arr.sort((a,b) => b.winRate - a.winRate);
+      if (currentSort === "dust")    return arr.sort((a,b) => a.dust - b.dust);
+      if (currentSort === "name")    return arr.sort((a,b) => a.name.localeCompare(b.name, "zh"));
+      return arr;
+    }
+
+    // ====== 渲染 ======
+    function render() {
+      let filtered = decks.filter(d => {
+        if (currentClass !== "all" && d.hero !== currentClass) return false;
+        if (currentTier !== "all" && d.tier !== currentTier) return false;
+        if (currentSearch && !d.name.includes(currentSearch)) return false;
+        return true;
+      });
+      filtered = sortDecks([...filtered]);
+
+      document.getElementById("resultCount").textContent = `共 ${filtered.length} 套`;
+      document.getElementById("countAll").textContent = filtered.length;
+
+      // 更新统计栏
+      const sCount = filtered.filter(d=>d.tier==="S").length;
+      const aCount = filtered.filter(d=>d.tier==="A").length;
+      const bCount = filtered.filter(d=>d.tier==="B").length;
+      document.getElementById("countS").textContent = sCount;
+      document.getElementById("countA").textContent = aCount;
+      document.getElementById("countB").textContent = bCount;
+
+      const grid = document.getElementById("deckGrid");
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="no-result"><div class="big">🔍</div><p>没有找到匹配的卡组</p><p style="font-size:13px;margin-top:8px;">试试换个筛选条件</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map((d,i) => `
+        <div class="deck-card" onclick="openModal('${d.name}')">
+          <div class="deck-header">
+            <span class="deck-class"><span class="class-icon">${d.icon}</span> ${d.hero}</span>
+            <span class="tier-badge tier-${d.tier}">${d.tier}</span>
+          </div>
+          <div class="deck-name">${d.name}</div>
+          <div class="deck-tags">${d.tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
+          <div class="deck-stats">
+            <span>胜率 <span class="stat-value ${winClass(d.winRate)}">${d.winRate}%</span></span>
+            <span>费用 <span class="stat-value">${d.dust}</span></span>
+          </div>
+          <div class="deck-desc">${d.desc}</div>
+          <div class="deck-footer"><span class="view-detail">点击查看详情 →</span></div>
+        </div>
+      `).join("");
+    }
+
+    // ====== 打开详情弹窗 ======
+    function openModal(name) {
+      const d = decks.find(x => x.name === name);
+      if (!d) return;
+
+      const overlay = document.getElementById("modalOverlay");
+      const content = document.getElementById("modalContent");
+
+      content.innerHTML = `
+        <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('show')">✕</button>
+        <div class="modal-header">
+          <div>
+            <div class="modal-class"><span class="big-icon">${d.icon}</span> ${d.hero}</div>
+            <div class="modal-name">${d.name}</div>
+          </div>
+          <span class="modal-tier tier-badge tier-${d.tier}" style="font-size:18px; padding:6px 18px;">${d.tier} 级</span>
+        </div>
+
+        <div class="modal-stats">
+          <div class="modal-stat"><div class="num" style="color:${d.winRate>=55?'#4caf50':d.winRate>=50?'#ffb347':'#f44336'}">${d.winRate}%</div><div class="lbl">胜率</div></div>
+          <div class="modal-stat"><div class="num">${d.dust}</div><div class="lbl">奥术之尘</div></div>
+          <div class="modal-stat"><div class="num">${d.tags.join("/")}</div><div class="lbl">类型</div></div>
+        </div>
+
+        <p style="color:#aaa; line-height:1.7;">${d.desc}</p>
+
+        <div class="modal-section">
+          <h3>🗝️ 核心单卡</h3>
+          ${d.keyCards.map(c => `<span class="key-card"><span class="mana">${c.cost}</span> ${c.name}</span>`).join("")}
+        </div>
+
+        <div class="modal-section">
+          <h3>📊 对局优劣</h3>
+          <div class="matchup-row">
+            <div class="matchup-col">
+              <h4 class="matchup-good">✅ 优势对局</h4>
+              ${d.goodVs.map(m => `<div class="matchup-item">🟢 ${m}</div>`).join("")}
+            </div>
+            <div class="matchup-col">
+              <h4 class="matchup-bad">❌ 劣势对局</h4>
+              ${d.badVs.map(m => `<div class="matchup-item">🔴 ${m}</div>`).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+
+      overlay.classList.add("show");
+      document.body.style.overflow = "hidden";
+    }
+
+    // ====== 关闭弹窗 ======
+    function closeModal(e) {
+      if (e.target === document.getElementById("modalOverlay")) {
+        document.getElementById("modalOverlay").classList.remove("show");
+        document.body.style.overflow = "";
+      }
+    }
+    document.addEventListener("keydown", e => {
+      if (e.key === "Escape") {
+        document.getElementById("modalOverlay").classList.remove("show");
+        document.body.style.overflow = "";
+      }
+    });
+
+    // ====== 筛选按钮 ======
+    document.getElementById("filterBar").addEventListener("click", e => {
+      if (!e.target.classList.contains("filter-btn")) return;
+      const btn = e.target, type = btn.dataset.type, value = btn.dataset.value;
+      document.getElementById("filterBar").querySelectorAll(`[data-type="${type}"]`).forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      if (type === "class") currentClass = value;
+      if (type === "tier")  currentTier  = value;
+      render();
+    });
+
+    // ====== 搜索 ======
+    document.getElementById("searchInput").addEventListener("input", function() {
+      currentSearch = this.value.trim();
+      render();
+    });
+
+    // ====== 排序 ======
+    document.getElementById("sortSelect").addEventListener("change", function() {
+      currentSort = this.value;
+      render();
+    });
+
+    // ====== 首次加载 ======
+    render();
+  </script>
+</body>
+</html>
